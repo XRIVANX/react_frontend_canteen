@@ -31,7 +31,7 @@ const CategoryPieChart = ({ dateRange }) => {
       
       const formattedData = response.data.map((item) => ({
         name: item.name,
-        value: item.revenue,
+        value: Number(item.revenue),
       }));
       
       setData(formattedData);

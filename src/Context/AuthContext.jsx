@@ -40,8 +40,8 @@ export const AuthProvider = ({ children }) => {
     login,
     logout,
     loading,
-    isAuthenticated: authService.isAuthenticated,
-    hasRole: authService.hasRole,
+    isAuthenticated: () => authService.isAuthenticated(),
+    hasRole: (role) => authService.hasRole(role),
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

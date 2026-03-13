@@ -27,7 +27,10 @@ const AdminDashboard = () => {
     try {
       setLoading(true);
       const response = await api.get('/reports/summary', {
-        params: dateRange,
+        params: {
+          from_date: dateRange.from,
+          to_date: dateRange.to,
+        },
       });
       setSummary(response.data);
     } catch (error) {
@@ -86,7 +89,7 @@ const AdminDashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
         <StatCard
           title="Total Revenue"
-          value={`$${summary?.total_revenue?.toFixed(2) || '0.00'}`}
+          value={`$${Number(summary?.total_revenue || 0).toFixed(2)}`}
           icon={CurrencyDollarIcon}
           color="text-green-600"
         />
@@ -98,7 +101,7 @@ const AdminDashboard = () => {
         />
         <StatCard
           title="Avg Order Value"
-          value={`$${summary?.average_order_value?.toFixed(2) || '0.00'}`}
+          value={`$${Number(summary?.average_order_value || 0).toFixed(2)}`}
           icon={UsersIcon}
           color="text-purple-600"
         />
@@ -127,6 +130,8 @@ const AdminDashboard = () => {
         <OrderTrendChart />
       </div>
     </div>
+
+    
   );
 };
 

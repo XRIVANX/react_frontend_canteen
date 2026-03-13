@@ -84,7 +84,7 @@ const Login = () => {
             <p>Demo credentials:</p>
             <p>Admin: admin@canteen.com / password</p>
             <p>Cashier: cashier1@canteen.com / password</p>
-            <p>Customer: customer1@example.com / password</p>
+            <p>Customer: customer1@canteen.com / password</p>
           </div>
         </form>
       </div>

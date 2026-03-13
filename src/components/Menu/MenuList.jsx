@@ -27,8 +27,8 @@ const MenuList = () => {
         api.get('/menu'),
         api.get('/categories'),
       ]);
-      setMenuItems(menuRes.data);
-      setCategories(categoriesRes.data);
+      setMenuItems(Array.isArray(menuRes.data) ? menuRes.data : menuRes.data.data || []);
+      setCategories(Array.isArray(categoriesRes.data) ? categoriesRes.data : categoriesRes.data.data || []);
     } catch (error) {
       toast.error('Failed to load menu');
     } finally {
@@ -62,7 +62,7 @@ const MenuList = () => {
 
   const filteredItems = menuItems.filter((item) => {
     const matchesCategory = filter.category === 'all' || item.category_id === parseInt(filter.category);
-    const matchesSearch = item.name.toLowerCase().includes(filter.search.toLowerCase());
+    const matchesSearch = (item.name || '').toLowerCase().includes((filter.search || '').toLowerCase());
     const matchesAvailability = 
       filter.availability === 'all' ||
       (filter.availability === 'available' && item.is_available) ||

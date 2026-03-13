@@ -7,7 +7,7 @@ import {
 } from '@heroicons/react/24/outline';
 
 const MenuItemCard = ({ item, onEdit, onDelete, onToggleAvailability }) => {
-  const isLowStock = item.stock_quantity <= item.low_stock_threshold;
+  const isLowStock = Number(item.stock_quantity || 0) <= Number(item.low_stock_threshold || 0);
 
   return (
     <div className="bg-white rounded-lg shadow overflow-hidden">
@@ -25,7 +25,7 @@ const MenuItemCard = ({ item, onEdit, onDelete, onToggleAvailability }) => {
             <p className="text-sm text-gray-500">{item.category?.name}</p>
           </div>
           <span className="text-lg font-bold text-blue-600">
-            ${item.price.toFixed(2)}
+            ${Number(item.price || 0).toFixed(2)}
           </span>
         </div>
         
@@ -37,7 +37,7 @@ const MenuItemCard = ({ item, onEdit, onDelete, onToggleAvailability }) => {
           <div className="flex justify-between text-sm">
             <span className="text-gray-600">Stock:</span>
             <span className={`font-medium ${isLowStock ? 'text-red-600' : 'text-green-600'}`}>
-              {item.stock_quantity} units
+              {Number(item.stock_quantity || 0)} units
             </span>
           </div>
           <div className="flex justify-between text-sm">

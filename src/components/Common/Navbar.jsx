@@ -23,7 +23,7 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex justify-between h-16">
           <div className="flex">
-            <div className="flex-shrink-0flex items-center">
+            <div className="shrink-0 flex items-center">
               <h1 className="text-xl font-bold text-gray-800">Canteen MS</h1>
             </div>
             <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
@@ -34,15 +34,24 @@ const Navbar = () => {
                 <HomeIcon className="h-5 w-5 mr-1" />
                 Dashboard
               </Link>
-              
-              {user?.role !== 'customer' && (
-                <Link
-                  to="/orders/queue"
-                  className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 hover:text-gray-900"
-                >
-                  <ClipboardDocumentListIcon className="h-5 w-5 mr-1" />
-                  Orders
-                </Link>
+
+              {user?.role === 'customer' && (
+                <>
+                  <Link
+                    to="/menu"
+                    className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 hover:text-gray-900"
+                  >
+                    <CubeIcon className="h-5 w-5 mr-1" />
+                    Menu
+                  </Link>
+                  <Link
+                    to="/my-orders"
+                    className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 hover:text-gray-900"
+                  >
+                    <ClipboardDocumentListIcon className="h-5 w-5 mr-1" />
+                    My Orders
+                  </Link>
+                </>
               )}
 
               {user?.role === 'admin' && (
@@ -54,6 +63,14 @@ const Navbar = () => {
                     <CubeIcon className="h-5 w-5 mr-1" />
                     Menu
                   </Link>
+                
+              {user?.role === 'cashier' && (
+                    <>
+                      <Link to="/pos" className="nav-link">POS</Link>
+                      <Link to="/orders/queue" className="nav-link">Order Queue</Link>
+                      <Link to="/inventory" className="nav-link">Inventory</Link>
+                    </>
+                  )}
                   <Link
                     to="/reports"
                     className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 hover:text-gray-900"

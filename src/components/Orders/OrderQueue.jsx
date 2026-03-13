@@ -16,7 +16,7 @@ const OrderQueue = () => {
   const fetchOrders = async () => {
     try {
       const data = await orderService.getOrderQueue();
-      setOrders(data);
+      setOrders(Array.isArray(data) ? data : data.data || []);
     } catch (error) {
       toast.error('Failed to fetch orders');
     } finally {
@@ -92,19 +92,19 @@ const OrderQueue = () => {
                 <div className="flex justify-between items-start mb-2">
                   <span className="font-bold">{order.order_number}</span>
                   <span className="text-sm text-gray-500">
-                    {format(new Date(order.created_at), 'HH:mm')}
+                    {order.created_at ? format(new Date(order.created_at), 'HH:mm') : 'N/A'}
                   </span>
                 </div>
                 <div className="text-sm mb-2">
-                  {order.items.map((item) => (
+                  {order.items?.map((item) => (
                     <div key={item.id} className="flex justify-between">
-                      <span>{item.menu_item.name} x{item.quantity}</span>
-                      <span>${item.subtotal.toFixed(2)}</span>
+                      <span>{item.menu_item?.name} x{item.quantity}</span>
+                      <span>${Number(item.subtotal || 0).toFixed(2)}</span>
                     </div>
                   ))}
                 </div>
                 <div className="flex justify-between items-center mt-2 pt-2 border-t">
-                  <span className="font-bold">Total: ${order.total_amount.toFixed(2)}</span>
+                  <span className="font-bold">Total: ${Number(order.total_amount || 0).toFixed(2)}</span>
                   <button
                     onClick={() => updateStatus(order.id, getNextStatus(order.status))}
                     className="px-3 py-1 bg-yellow-600 text-white rounded-md text-sm hover:bg-yellow-700"
@@ -128,19 +128,19 @@ const OrderQueue = () => {
                 <div className="flex justify-between items-start mb-2">
                   <span className="font-bold">{order.order_number}</span>
                   <span className="text-sm text-gray-500">
-                    {format(new Date(order.created_at), 'HH:mm')}
+                    {order.created_at ? format(new Date(order.created_at), 'HH:mm') : 'N/A'}
                   </span>
                 </div>
                 <div className="text-sm mb-2">
-                  {order.items.map((item) => (
+                  {order.items?.map((item) => (
                     <div key={item.id} className="flex justify-between">
-                      <span>{item.menu_item.name} x{item.quantity}</span>
-                      <span>${item.subtotal.toFixed(2)}</span>
+                      <span>{item.menu_item?.name} x{item.quantity}</span>
+                      <span>${Number(item.subtotal || 0).toFixed(2)}</span>
                     </div>
                   ))}
                 </div>
                 <div className="flex justify-between items-center mt-2 pt-2 border-t">
-                  <span className="font-bold">Total: ${order.total_amount.toFixed(2)}</span>
+                  <span className="font-bold">Total: ${Number(order.total_amount || 0).toFixed(2)}</span>
                   <button
                     onClick={() => updateStatus(order.id, getNextStatus(order.status))}
                     className="px-3 py-1 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700"
@@ -164,19 +164,19 @@ const OrderQueue = () => {
                 <div className="flex justify-between items-start mb-2">
                   <span className="font-bold">{order.order_number}</span>
                   <span className="text-sm text-gray-500">
-                    {format(new Date(order.created_at), 'HH:mm')}
+                    {order.created_at ? format(new Date(order.created_at), 'HH:mm') : 'N/A'}
                   </span>
                 </div>
                 <div className="text-sm mb-2">
-                  {order.items.map((item) => (
+                  {order.items?.map((item) => (
                     <div key={item.id} className="flex justify-between">
-                      <span>{item.menu_item.name} x{item.quantity}</span>
-                      <span>${item.subtotal.toFixed(2)}</span>
+                      <span>{item.menu_item?.name} x{item.quantity}</span>
+                      <span>${Number(item.subtotal || 0).toFixed(2)}</span>
                     </div>
                   ))}
                 </div>
                 <div className="flex justify-between items-center mt-2 pt-2 border-t">
-                  <span className="font-bold">Total: ${order.total_amount.toFixed(2)}</span>
+                  <span className="font-bold">Total: ${Number(order.total_amount || 0).toFixed(2)}</span>
                   <button
                     onClick={() => updateStatus(order.id, 'completed')}
                     className="px-3 py-1 bg-green-600 text-white rounded-md text-sm hover:bg-green-700"

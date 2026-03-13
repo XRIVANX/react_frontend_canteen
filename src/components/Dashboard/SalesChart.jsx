@@ -33,8 +33,8 @@ const SalesChart = ({ dateRange }) => {
       
       const formattedData = response.data.map((item) => ({
         date: format(parseISO(item.date), 'MMM dd'),
-        revenue: item.total_revenue,
-        orders: item.total_orders,
+        revenue: Number(item.total_revenue),
+        orders: Number(item.total_orders),
       }));
       
       setData(formattedData);
