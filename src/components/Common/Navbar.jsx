@@ -87,11 +87,17 @@ const Navbar = () => {
 
             {user?.role === 'admin' && (
               <>
+                <Link to="/pos" className={linkClass('/pos')}>
+                  <ShoppingCartIcon className="h-4 w-4" />POS
+                </Link>
+                <Link to="/orders/queue" className={linkClass('/orders/queue')}>
+                  <QueueListIcon className="h-4 w-4" />Queue
+                </Link>
                 <Link to="/menu" className={linkClass('/menu')}>
                   <CubeIcon className="h-4 w-4" />Menu
                 </Link>
                 <Link to="/inventory-logs" className={linkClass('/inventory-logs')}>
-                  <ClipboardDocumentListIcon className="h-4 w-4" />Inventory Logs
+                  <ClipboardDocumentListIcon className="h-4 w-4" />Inventory
                 </Link>
                 <Link to="/reports" className={linkClass('/reports')}>
                   <ChartBarIcon className="h-4 w-4" />Reports
@@ -161,6 +167,12 @@ const Navbar = () => {
             )}
             {user?.role === 'admin' && (
               <>
+                <Link to="/pos" className={mobileLinkClass('/pos')} onClick={() => setMobileOpen(false)}>
+                  <ShoppingCartIcon className="h-5 w-5" />POS
+                </Link>
+                <Link to="/orders/queue" className={mobileLinkClass('/orders/queue')} onClick={() => setMobileOpen(false)}>
+                  <QueueListIcon className="h-5 w-5" />Order Queue
+                </Link>
                 <Link to="/menu" className={mobileLinkClass('/menu')} onClick={() => setMobileOpen(false)}>
                   <CubeIcon className="h-5 w-5" />Menu
                 </Link>

@@ -78,20 +78,27 @@ const CashierDashboard = () => {
     if (showRefresh) setRefreshing(true);
     try {
       setError(null);
-      const queueRes = await api.get('/orders/queue');
+
+      // Run queue + today-stats + low-stock in parallel for speed
+      const [queueRes, todayRes, lowStockRes] = await Promise.all([
+        api.get('/orders/queue'),
+        api.get('/orders/today-stats'),
+        api.get('/inventory/low-stock'),
+      ]);
+
       const queueOrders = queueRes.data || [];
-      const totalRevenue = queueOrders.reduce((s, o) => s + (parseFloat(o.total_amount) || 0), 0);
+      const todayData   = todayRes.data?.data || {};
 
       setStats({
-        todayOrders: queueOrders.length,
-        todayRevenue: totalRevenue,
-        pendingOrders:   queueOrders.filter(o => o.status === 'pending').length,
-        preparingOrders: queueOrders.filter(o => o.status === 'preparing').length,
-        readyOrders:     queueOrders.filter(o => o.status === 'ready').length,
-        completedOrders: 0,
+        todayOrders:     todayData.total_orders     ?? queueOrders.length,
+        todayRevenue:    parseFloat(todayData.total_revenue) || 0,
+        pendingOrders:   todayData.pending          ?? queueOrders.filter(o => o.status === 'pending').length,
+        preparingOrders: todayData.preparing        ?? queueOrders.filter(o => o.status === 'preparing').length,
+        readyOrders:     todayData.ready            ?? queueOrders.filter(o => o.status === 'ready').length,
+        completedOrders: todayData.completed        ?? 0,
       });
 
-      // user is now eager-loaded by the queue endpoint — no extra API calls needed
+      // Active queue list (user eager-loaded by the queue endpoint)
       const sorted = [...queueOrders]
         .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
         .slice(0, 5)
@@ -103,7 +110,6 @@ const CashierDashboard = () => {
         }));
       setRecentOrders(sorted);
 
-      const lowStockRes = await api.get('/inventory/low-stock');
       setLowStockItems(lowStockRes.data || []);
     } catch (error) {
       if (error.response?.status === 403) setError('Permission denied.');

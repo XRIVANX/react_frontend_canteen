@@ -72,16 +72,14 @@ function AppContent() {
           }
         />
 
-        {/* POS Interface - Cashier only */}
+        {/* POS Interface - Cashier & Admin */}
         <Route
           path="/pos"
           element={
-            <ProtectedRoute requiredRole="cashier">
+            <ProtectedRoute requiredRole={["cashier", "admin"]}>
               <>
                 <Navbar />
-                <div className="container mx-auto px-4 py-8">
-                  <POSInterface />
-                </div>
+                <POSInterface />
               </>
             </ProtectedRoute>
           }
@@ -94,7 +92,7 @@ function AppContent() {
             <ProtectedRoute requiredRole={["cashier", "admin"]}>
               <>
                 <Navbar />
-                <div className="container mx-auto px-4 py-8">
+                <div className="px-2 sm:px-4 py-4">
                   <OrderQueue />
                 </div>
               </>
