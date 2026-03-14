@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../Services/api';
 import {
@@ -58,19 +58,37 @@ const CustomerDashboard = () => {
   const [menuItems, setMenuItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [imageErrors, setImageErrors] = useState({});
+  const [lastUpdated, setLastUpdated] = useState(null);
+  
+  const isMounted = useRef(true);
+  const refreshInterval = useRef(null);
 
   const formatCurrency = (v) => (parseFloat(v) || 0).toFixed(2);
   const handleImageError = (id) => setImageErrors(prev => ({ ...prev, [id]: true }));
 
-  useEffect(() => { fetchCustomerData(); }, []);
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      isMounted.current = false;
+      if (refreshInterval.current) {
+        clearInterval(refreshInterval.current);
+      }
+    };
+  }, []);
 
-  const fetchCustomerData = async () => {
+  const fetchCustomerData = useCallback(async (showToast = false) => {
     try {
       const ordersRes = await api.get('/customer/orders');
+      
+      if (!isMounted.current) return;
+      
       const orders = ordersRes.data || [];
+      
+      // Calculate stats
       const totalSpent = orders.reduce((s, o) => s + (parseFloat(o.total_amount) || 0), 0);
-      const pendingOrders = orders.filter(o => ['pending','preparing','ready'].includes(o.status)).length;
+      const pendingOrders = orders.filter(o => ['pending', 'preparing', 'ready'].includes(o.status)).length;
 
+      // Calculate favorite item
       const itemCounts = {};
       orders.forEach(order => {
         (order.items || []).forEach(item => {
@@ -78,32 +96,119 @@ const CustomerDashboard = () => {
           itemCounts[name] = (itemCounts[name] || 0) + (item.quantity || 0);
         });
       });
+      
       let favoriteItem = null, maxCount = 0;
       for (const [name, count] of Object.entries(itemCounts)) {
-        if (count > maxCount) { maxCount = count; favoriteItem = { name, count }; }
+        if (count > maxCount) { 
+          maxCount = count; 
+          favoriteItem = { name, count }; 
+        }
       }
 
-      setStats({ totalSpent, totalOrders: orders.length, pendingOrders, favoriteItem });
-      setRecentOrders([...orders].sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 3));
+      setStats({ 
+        totalSpent, 
+        totalOrders: orders.length, 
+        pendingOrders, 
+        favoriteItem 
+      });
+      
+      setRecentOrders([...orders]
+        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+        .slice(0, 3));
 
-      const menuRes = await api.get('/menu?available=true');
-      setMenuItems((menuRes.data || []).slice(0, 4));
-    } catch {
-      setStats({ totalSpent: 156.50, totalOrders: 3, pendingOrders: 1, favoriteItem: { name: 'Chicken Rice', count: 2 } });
-      setRecentOrders([
-        { id: 1, order_number: 'ORD-001', total_amount: 45.00, status: 'delivered', items: [{}], created_at: new Date().toISOString() },
-        { id: 2, order_number: 'ORD-002', total_amount: 78.50, status: 'preparing', items: [{},{}], created_at: new Date().toISOString() }
-      ]);
-      setMenuItems([
-        { id: 1, name: 'Chicken Rice',  price: 45.00, description: 'Steamed chicken with fragrant white rice', image: null },
-        { id: 2, name: 'Nasi Lemak',    price: 50.00, description: 'Coconut rice with sambal & fried egg',    image: null },
-        { id: 3, name: 'Mee Goreng',    price: 48.00, description: 'Spicy stir-fried yellow noodles',         image: null },
-        { id: 4, name: 'Chicken Chop',  price: 65.00, description: 'Grilled chicken with crispy fries',       image: null }
-      ]);
+      setLastUpdated(new Date());
+
+      // Only fetch menu items if needed (they don't change often)
+      if (menuItems.length === 0) {
+        const menuRes = await api.get('/menu?available=true');
+        if (isMounted.current) {
+          setMenuItems((menuRes.data || []).slice(0, 4));
+        }
+      }
+
+      if (showToast) {
+        toast.success('Dashboard updated!');
+      }
+
+    } catch (error) {
+      console.error('Error fetching customer data:', error);
+      if (!isMounted.current) return;
+      
+      // Only set fallback data if we have no data at all
+      if (stats.totalOrders === 0) {
+        setStats({ 
+          totalSpent: 156.50, 
+          totalOrders: 3, 
+          pendingOrders: 1, 
+          favoriteItem: { name: 'Chicken Rice', count: 2 } 
+        });
+        setRecentOrders([
+          { id: 1, order_number: 'ORD-001', total_amount: 45.00, status: 'delivered', items: [{}], created_at: new Date().toISOString() },
+          { id: 2, order_number: 'ORD-002', total_amount: 78.50, status: 'preparing', items: [{},{}], created_at: new Date().toISOString() }
+        ]);
+        setMenuItems([
+          { id: 1, name: 'Chicken Rice',  price: 45.00, description: 'Steamed chicken with fragrant white rice', image: null },
+          { id: 2, name: 'Nasi Lemak',    price: 50.00, description: 'Coconut rice with sambal & fried egg',    image: null },
+          { id: 3, name: 'Mee Goreng',    price: 48.00, description: 'Spicy stir-fried yellow noodles',         image: null },
+          { id: 4, name: 'Chicken Chop',  price: 65.00, description: 'Grilled chicken with crispy fries',       image: null }
+        ]);
+      }
     } finally {
-      setLoading(false);
+      if (isMounted.current) {
+        setLoading(false);
+      }
     }
-  };
+  }, [menuItems.length, stats.totalOrders]);
+
+  // Initial fetch and setup real-time updates
+  useEffect(() => {
+    fetchCustomerData();
+
+    // Poll every 10 seconds for real-time updates
+    refreshInterval.current = setInterval(() => {
+      if (isMounted.current) {
+        fetchCustomerData(false);
+      }
+    }, 10000);
+
+    // Listen for storage events (for multi-tab updates)
+    const handleStorageChange = (e) => {
+      if (e.key === 'order-updated' || e.key === 'new-order') {
+        fetchCustomerData(false);
+      }
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+
+    // Custom event listeners for same-tab updates
+    const handleOrderUpdate = () => {
+      fetchCustomerData(true);
+    };
+
+    window.addEventListener('order-status-changed', handleOrderUpdate);
+    window.addEventListener('new-order-placed', handleOrderUpdate);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('order-status-changed', handleOrderUpdate);
+      window.removeEventListener('new-order-placed', handleOrderUpdate);
+    };
+  }, [fetchCustomerData]);
+
+  // Add visibility change listener to refresh when tab becomes active
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && isMounted.current) {
+        fetchCustomerData(false);
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [fetchCustomerData]);
 
   if (loading) return <CustomerSkeleton />;
 
@@ -115,7 +220,14 @@ const CustomerDashboard = () => {
         style={{ background: 'linear-gradient(135deg, #800000 0%, #9B1C1C 60%, #c0392b 100%)' }}
       >
         <div className="relative z-10">
-          <p className="text-white/70 text-sm font-medium uppercase tracking-widest mb-1">Customer Portal</p>
+          <div className="flex items-center gap-3 mb-1">
+            <p className="text-white/70 text-sm font-medium uppercase tracking-widest">Customer Portal</p>
+            {lastUpdated && (
+              <span className="text-xs text-white/50">
+                Updated: {lastUpdated.toLocaleTimeString()}
+              </span>
+            )}
+          </div>
           <h1 className="text-3xl font-bold mb-2">Welcome back! 👋</h1>
           <p className="text-white/75 text-sm">Hungry? Check out today's menu or track your orders below.</p>
           <Link to="/menu"
