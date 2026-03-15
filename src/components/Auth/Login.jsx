@@ -166,10 +166,18 @@ const Login = () => {
               <p><span className="font-semibold text-gray-700">Customer:</span> customer1@canteen.com / password</p>
             </div>
           </div>
+
+          {/* Register link */}
+          <p className="mt-4 text-center text-sm text-gray-500">
+            Don't have an account?{' '}
+            <Link to="/register" className="font-semibold hover:underline" style={{ color: '#800000' }}>
+              Create one
+            </Link>
+          </p>
         </div>
       </div>
     </div>
   );
 };
 
-export default Login;
+export default Login;

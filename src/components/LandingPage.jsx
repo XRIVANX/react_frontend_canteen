@@ -1,34 +1,47 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import {
+  BookOpenIcon,
+  CalculatorIcon,
+  ChartBarIcon,
+  ArchiveBoxIcon,
+  QueueListIcon,
+  UserGroupIcon,
+  AcademicCapIcon,
+  BoltIcon,
+  BriefcaseIcon,
+  CreditCardIcon,
+  UserIcon
+} from '@heroicons/react/24/outline';
 
 const features = [
   {
-    icon: '🍽️',
+    icon: <BookOpenIcon className="w-6 h-6" />,
     title: 'Digital Menu',
     desc: 'Browse available meals in real-time with photos, prices, and stock info.',
   },
   {
-    icon: '🧾',
+    icon: <CalculatorIcon className="w-6 h-6" />,
     title: 'Point of Sale',
     desc: 'Fast and intuitive POS for cashiers — select items, assign customers, and complete orders in seconds.',
   },
   {
-    icon: '📊',
+    icon: <ChartBarIcon className="w-6 h-6" />,
     title: 'Reports & Analytics',
     desc: 'Daily sales summaries, best-selling items, and category breakdowns at a glance.',
   },
   {
-    icon: '📦',
+    icon: <ArchiveBoxIcon className="w-6 h-6" />,
     title: 'Inventory Tracking',
     desc: 'Monitor stock levels with low-stock alerts and automatic deduction per order.',
   },
   {
-    icon: '🔄',
+    icon: <QueueListIcon className="w-6 h-6" />,
     title: 'Live Order Queue',
     desc: 'Kanban-style queue shows pending, preparing, and ready orders in real time.',
   },
   {
-    icon: '👤',
+    icon: <UserGroupIcon className="w-6 h-6" />,
     title: 'Role-Based Access',
     desc: 'Separate portals for admins, cashiers, and customers with the right tools for each.',
   },
@@ -42,7 +55,7 @@ const LandingPage = () => {
       <nav className="sticky top-0 z-50 shadow-sm" style={{ background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(10px)' }}>
         <div className="max-w-7xl mx-auto px-6 py-3.5 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <span className="text-2xl">🍽️</span>
+            <BookOpenIcon className="w-6 h-6 text-gray-900" />
             <span className="font-bold text-lg" style={{ color: '#800000' }}>Eljay's Kusina</span>
           </div>
           <Link
@@ -74,7 +87,7 @@ const LandingPage = () => {
               className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold mb-6 tracking-widest uppercase"
               style={{ background: 'rgba(255,255,255,0.15)', color: '#fff', border: '1px solid rgba(255,255,255,0.25)', backdropFilter: 'blur(6px)' }}
             >
-              🎓 School Canteen Management System
+              <AcademicCapIcon className="w-4 h-4" /> School Canteen Management System
             </span>
 
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-5">
@@ -106,12 +119,12 @@ const LandingPage = () => {
             <div className="flex flex-wrap gap-8 mt-12">
               {[
                 { label: 'Roles Supported', value: '3' },
-                { label: 'Real-Time Sync', value: '⚡' },
-                { label: 'Reports & Charts', value: '📊' },
+                { label: 'Real-Time Sync', value: <BoltIcon className="w-8 h-8" /> },
+                { label: 'Reports & Charts', value: <ChartBarIcon className="w-8 h-8" /> },
               ].map(({ label, value }) => (
                 <div key={label}>
-                  <p className="text-3xl font-extrabold text-white">{value}</p>
-                  <p className="text-white/60 text-sm mt-0.5">{label}</p>
+                  <p className="text-3xl font-extrabold text-white flex items-center h-9">{value}</p>
+                  <p className="text-white/60 text-sm mt-1">{label}</p>
                 </div>
               ))}
             </div>
@@ -165,16 +178,16 @@ const LandingPage = () => {
 
         <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
           {[
-            { role: 'Admin', icon: '👨‍💼', color: '#ff8a80', desc: 'Manage menus, view reports, track inventory.' },
-            { role: 'Cashier', icon: '💳', color: '#80cbc4', desc: 'Process orders via POS and manage the queue.' },
-            { role: 'Customer', icon: '🧑‍🎓', color: '#ffe082', desc: 'Browse menu and track order status.' },
+            { role: 'Admin', icon: <BriefcaseIcon className="w-12 h-12 mx-auto" />, color: '#ff8a80', desc: 'Manage menus, view reports, track inventory.' },
+            { role: 'Cashier', icon: <CreditCardIcon className="w-12 h-12 mx-auto" />, color: '#80cbc4', desc: 'Process orders via POS and manage the queue.' },
+            { role: 'Customer', icon: <UserIcon className="w-12 h-12 mx-auto" />, color: '#ffe082', desc: 'Browse menu and track order status.' },
           ].map(({ role, icon, color, desc }) => (
             <div
               key={role}
               className="rounded-2xl p-6 text-center"
               style={{ background: 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.15)', backdropFilter: 'blur(8px)' }}
             >
-              <div className="text-5xl mb-3">{icon}</div>
+              <div className="mb-4" style={{ color }}>{icon}</div>
               <h3 className="text-xl font-bold mb-2" style={{ color }}>{role}</h3>
               <p className="text-white/70 text-sm">{desc}</p>
             </div>

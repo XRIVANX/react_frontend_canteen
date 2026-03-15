@@ -10,7 +10,8 @@ import {
   QueueListIcon,
   ArrowRightOnRectangleIcon,
   Bars3Icon,
-  XMarkIcon
+  XMarkIcon,
+  UsersIcon
 } from '@heroicons/react/24/outline';
 
 const Navbar = () => {
@@ -102,6 +103,9 @@ const Navbar = () => {
                 <Link to="/reports" className={linkClass('/reports')}>
                   <ChartBarIcon className="h-4 w-4" />Reports
                 </Link>
+                <Link to="/admin/users" className={linkClass('/admin/users')}>
+                  <UsersIcon className="h-4 w-4" />Users
+                </Link>
               </>
             )}
           </div>
@@ -181,6 +185,9 @@ const Navbar = () => {
                 </Link>
                 <Link to="/reports" className={mobileLinkClass('/reports')} onClick={() => setMobileOpen(false)}>
                   <ChartBarIcon className="h-5 w-5" />Reports
+                </Link>
+                <Link to="/admin/users" className={mobileLinkClass('/admin/users')} onClick={() => setMobileOpen(false)}>
+                  <UsersIcon className="h-5 w-5" />Users
                 </Link>
               </>
             )}

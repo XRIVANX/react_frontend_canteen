@@ -58,7 +58,7 @@ const POSInterface = () => {
 
   useEffect(() => {
     if (customerSearchTerm.trim() === '') {
-      setFilteredCustomers(customers.slice(0, 5));
+      setFilteredCustomers(customers);
     } else {
       const q = customerSearchTerm.toLowerCase();
       setFilteredCustomers(
@@ -66,7 +66,7 @@ const POSInterface = () => {
           c.name?.toLowerCase().includes(q) ||
           c.email?.toLowerCase().includes(q) ||
           c.id?.toString().includes(q)
-        ).slice(0, 5)
+        )
       );
     }
   }, [customerSearchTerm, customers]);
@@ -88,25 +88,23 @@ const POSInterface = () => {
     setCustomersLoading(true);
     try {
       const res = await api.get('/customers');
-      const list = res.data?.data ?? (Array.isArray(res.data) ? res.data : []);
+      // Handle both flat array and {success, data: [...]} shapes
+      const raw = res.data;
+      const list = Array.isArray(raw)
+        ? raw
+        : Array.isArray(raw?.data)
+          ? raw.data
+          : [];
       setCustomers(list);
-      setFilteredCustomers(list.slice(0, 5));
+      setFilteredCustomers(list);
     } catch (err) {
-      if (err.response?.status !== 401 && err.response?.status !== 403) {
-        setDemoCustomers();
-      }
+      console.error('Failed to fetch customers:', err);
+      toast.error('Could not load customer list.');
+      setCustomers([]);
+      setFilteredCustomers([]);
     } finally {
       setCustomersLoading(false);
     }
-  };
-
-  const setDemoCustomers = () => {
-    const demo = [
-      { id: 4, name: 'Customer 1', email: 'customer1@canteen.com' },
-      { id: 5, name: 'Customer 2', email: 'customer2@canteen.com' },
-    ];
-    setCustomers(demo);
-    setFilteredCustomers(demo);
   };
 
   const fmt = (p) => (parseFloat(p) || 0).toFixed(2);
