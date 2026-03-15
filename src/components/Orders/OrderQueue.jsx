@@ -215,6 +215,13 @@ const OrderQueue = () => {
                           ))}
                         </div>
 
+                        {/* Notes */}
+                        {order.notes && (
+                          <div className="rounded-lg p-2.5 mb-3" style={{ background: '#fef3c7', borderLeft: '3px solid #f59e0b' }}>
+                            <p className="text-xs text-gray-800 font-medium">📝 {order.notes}</p>
+                          </div>
+                        )}
+
                         {/* Total + Actions */}
                         <div className="flex items-center justify-between gap-2">
                           <p className="font-bold text-gray-900 text-sm">
