@@ -32,7 +32,7 @@ const CustomerSkeleton = () => (
 const StatCard = ({ title, value, icon: Icon, accentColor, bgColor, subtitle, delay = 0 }) => (
   <div className="stat-card" style={{ borderLeftColor: accentColor, animationDelay: `${delay}ms` }}>
     <div className="flex items-center gap-3">
-      <div className="p-3 rounded-xl shrink-0" style={{ background: bgColor }}>
+      <div className="hidden sm:block p-3 rounded-xl shrink-0" style={{ background: bgColor }}>
         <Icon className="h-5 w-5" style={{ color: accentColor }} />
       </div>
       <div className="min-w-0">

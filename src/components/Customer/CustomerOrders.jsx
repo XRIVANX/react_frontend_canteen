@@ -141,6 +141,15 @@ const CustomerOrders = () => {
                   )}
                 </div>
 
+                {/* Notes */}
+                {order.notes && (
+                  <div className="px-5 pb-3">
+                    <div className="rounded-lg p-2.5" style={{ background: '#fef3c7', borderLeft: '3px solid #f59e0b' }}>
+                      <p className="text-xs text-gray-800 font-medium">📝 {order.notes}</p>
+                    </div>
+                  </div>
+                )}
+
                 {/* Total */}
                 <div className="px-5 py-3 border-t border-gray-100 flex justify-between items-center"
                   style={{ background: '#f9fafb' }}>
