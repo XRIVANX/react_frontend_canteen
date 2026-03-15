@@ -11,6 +11,19 @@ import api from '../../Services/api';
 
 const COLORS = ['#800000', '#9B1C1C', '#c0392b', '#e74c3c', '#EF9A9A', '#FFCDD2'];
 
+const renderCustomLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, name, value }) => {
+  const RADIAN = Math.PI / 180;
+  const radius = outerRadius * 1.15;
+  const x = cx + radius * Math.cos(-midAngle * RADIAN);
+  const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+  return (
+    <text x={x} y={y} fill="#666" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central" fontSize={11}>
+      {`${name} (₱${Number(value).toFixed(0)})`}
+    </text>
+  );
+};
+
 const CategoryPieChart = ({ dateRange }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -75,9 +88,9 @@ const CategoryPieChart = ({ dateRange }) => {
           data={data}
           cx="50%"
           cy="50%"
-          labelLine={false}
-          label={({ name, value }) => `${name}: ₱${Number(value).toFixed(0)}`}
-          outerRadius={90}
+          labelLine={true}
+          label={renderCustomLabel}
+          outerRadius={80}
           fill="#8884d8"
           dataKey="value"
         >
@@ -86,7 +99,7 @@ const CategoryPieChart = ({ dateRange }) => {
           ))}
         </Pie>
         <Tooltip formatter={(value) => [`₱${Number(value).toFixed(2)}`, 'Revenue']} />
-        <Legend />
+        <Legend wrapperStyle={{ fontSize: '11px' }} />
       </PieChart>
     </ResponsiveContainer>
   );

@@ -190,7 +190,7 @@ const Reports = () => {
             <ChartBarIcon className="h-4 w-4" style={{ color: '#800000' }} />
             Daily Sales <span className="ml-auto text-xs font-normal text-gray-400">{salesData.length} day{salesData.length !== 1 ? 's' : ''}</span>
           </div>
-          <div className="overflow-x-auto">
+          <div className="hidden md:block overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-100">
               <thead>
                 <tr style={{ background: '#f9fafb' }}>
@@ -218,6 +218,32 @@ const Reports = () => {
                 })}
               </tbody>
             </table>
+          </div>
+
+          {/* Mobile Sales Cards */}
+          <div className="md:hidden divide-y divide-gray-50">
+            {salesData.length === 0 ? (
+              <div className="px-5 py-12 text-center text-gray-400">No sales data for this period</div>
+            ) : salesData.map((item) => {
+              const dailyOrders = item.items?.[0]?.quantity || 0;
+              const avgDaily = dailyOrders > 0 ? item.total_amount / dailyOrders : 0;
+              return (
+                <div key={item.id} className="p-4 hover:bg-gray-50 transition-colors">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-sm font-bold text-gray-900">
+                      {item.created_at ? format(new Date(item.created_at), 'MMM dd, yyyy') : '—'}
+                    </span>
+                    <span className="text-sm font-bold" style={{ color: '#800000' }}>
+                      ₱{formatCurrency(item.total_amount)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center text-xs text-gray-500">
+                    <span className="flex items-center gap-1"><ShoppingBagIcon className="h-3.5 w-3.5" /> {dailyOrders} orders</span>
+                    <span>Avg: ₱{formatCurrency(avgDaily)}</span>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
 

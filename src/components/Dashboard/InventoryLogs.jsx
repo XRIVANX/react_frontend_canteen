@@ -194,8 +194,8 @@ const InventoryLogs = () => {
         </select>
       </div>
 
-      {/* Logs Table */}
-      <div className="card overflow-hidden">
+      {/* Desktop Logs Table */}
+      <div className="hidden md:block card overflow-hidden">
         {/* Table Header */}
         <div className="grid grid-cols-12 gap-4 px-5 py-3 text-xs font-bold text-gray-500 uppercase tracking-wide border-b border-gray-100">
           <div className="col-span-3">Item</div>
@@ -244,6 +244,56 @@ const InventoryLogs = () => {
             );
           })}
         </div>
+      </div>
+
+      {/* Mobile Logs Cards */}
+      <div className="md:hidden space-y-3">
+        {loading ? (
+          <div className="p-1"><LogsSkeleton /></div>
+        ) : filteredLogs.length === 0 ? (
+          <div className="py-12 text-center card bg-white">
+            <ExclamationTriangleIcon className="h-10 w-10 mx-auto text-gray-200 mb-2" />
+            <p className="text-gray-400 text-sm">No logs found</p>
+          </div>
+        ) : filteredLogs.map(log => {
+          const reason = reasonConfig[log.reason] || { label: log.reason, bg: '#F3F4F6', color: '#374151' };
+          const isNegative = (log.quantity_change || 0) < 0;
+          return (
+            <div key={log.id} className="card p-4 space-y-3 bg-white">
+              <div className="flex justify-between items-start">
+                <div>
+                  <p className="font-semibold text-gray-900">{log.menu_item?.name || `Item #${log.menu_item_id}`}</p>
+                  <p className="text-xs text-gray-400">{log.notes || '—'}</p>
+                </div>
+                <div className="text-right flex flex-col items-end">
+                  <div className="flex items-center gap-2">
+                    <span className={`font-bold text-base ${isNegative ? 'text-red-600' : 'text-green-600'}`}>
+                      {isNegative ? '' : '+'}{log.quantity_change}
+                    </span>
+                    <span className="text-xs text-gray-400">→ {log.new_quantity ?? '—'}</span>
+                  </div>
+                </div>
+              </div>
+              <div className="flex justify-between items-center bg-gray-50 p-2.5 rounded-lg border border-gray-100">
+                <div className="flex flex-col gap-1">
+                  <span className="text-[10px] text-gray-500 font-semibold uppercase tracking-wider">Reason</span>
+                  <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold w-fit"
+                    style={{ background: reason.bg, color: reason.color }}>
+                    {reason.label}
+                  </span>
+                </div>
+                <div className="flex flex-col gap-1 text-right">
+                  <span className="text-[10px] text-gray-500 font-semibold uppercase tracking-wider">By & Time</span>
+                  <div className="text-xs text-gray-700">
+                    {log.creator?.name || 'System'}
+                    <br/>
+                    <span className="text-[10px] text-gray-400">{log.created_at ? format(new Date(log.created_at), 'MMM dd • hh:mm a') : '—'}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       <p className="text-xs text-gray-400 mt-3 text-right">

@@ -210,7 +210,7 @@ const POSInterface = () => {
   );
 
   /* ── Cart panel content ── */
-  const CartPanel = () => (
+  const renderCartPanel = () => (
     <div className="flex flex-col h-full">
       <CustomerSelector />
 
@@ -285,7 +285,7 @@ const POSInterface = () => {
   );
 
   /* ── Menu grid content ── */
-  const MenuGrid = () => (
+  const renderMenuGrid = () => (
     <>
       {/* Search + Filter */}
       <div className="flex gap-2 mb-4">
@@ -360,12 +360,12 @@ const POSInterface = () => {
           DESKTOP: classic side-by-side layout
           hidden on mobile (< md)
       ════════════════════════════════════════════ */}
-      <div className="hidden md:flex h-[calc(100vh-4rem)] bg-gray-100 -mx-4 -mt-8">
+      <div className="hidden md:flex h-[calc(100vh-4rem)] bg-gray-100 -mx-4">
         {/* Menu pane */}
         <div className="flex-1 p-6 overflow-y-auto">
           <h1 className="text-2xl font-bold text-gray-900 mb-5">Point of Sale</h1>
           <CustomerSelector />
-          <MenuGrid />
+          {renderMenuGrid()}
         </div>
         {/* Cart pane */}
         <div className="w-80 xl:w-96 bg-white shadow-xl flex flex-col p-5 overflow-y-auto">
@@ -377,7 +377,7 @@ const POSInterface = () => {
               </span>
             )}
           </h2>
-          <CartPanel />
+          {renderCartPanel()}
         </div>
       </div>
 
@@ -410,7 +410,7 @@ const POSInterface = () => {
         <div className="flex-1 overflow-y-auto px-1">
           {mobileTab === 'menu' ? (
             <>
-              <MenuGrid />
+              {renderMenuGrid()}
               {/* Floating "Go to Cart" button when items exist */}
               {items.length > 0 && (
                 <button onClick={() => setMobileTab('cart')}
@@ -422,7 +422,7 @@ const POSInterface = () => {
               )}
             </>
           ) : (
-            <CartPanel />
+            renderCartPanel()
           )}
         </div>
       </div>

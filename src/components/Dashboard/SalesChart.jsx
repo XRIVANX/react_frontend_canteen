@@ -57,11 +57,11 @@ const SalesChart = ({ dateRange }) => {
     <ResponsiveContainer width="100%" height={300}>
       <BarChart data={data}>
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="date" />
-        <YAxis yAxisId="left" orientation="left" stroke="#8884d8" />
-        <YAxis yAxisId="right" orientation="right" stroke="#82ca9d" />
+        <XAxis dataKey="date" tick={{ fontSize: 12 }} minTickGap={15} />
+        <YAxis yAxisId="left" orientation="left" stroke="#8884d8" tick={{ fontSize: 12 }} width={45} />
+        <YAxis yAxisId="right" orientation="right" stroke="#82ca9d" tick={{ fontSize: 12 }} width={45} />
         <Tooltip />
-        <Legend />
+        <Legend wrapperStyle={{ fontSize: '12px' }} />
         <Bar yAxisId="left" dataKey="revenue" fill="#8884d8" name="Revenue (₱)" />
         <Bar yAxisId="right" dataKey="orders" fill="#82ca9d" name="Orders" />
       </BarChart>

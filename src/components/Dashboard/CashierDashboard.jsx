@@ -41,13 +41,13 @@ const DashboardSkeleton = () => (
 /* ── Stat Card ── */
 const StatCard = ({ title, value, icon: Icon, accentColor, bgColor, delay = 0 }) => (
   <div className="stat-card" style={{ borderLeftColor: accentColor, animationDelay: `${delay}ms` }}>
-    <div className="flex items-center gap-3">
-      <div className="p-2.5 rounded-xl shrink-0" style={{ background: bgColor }}>
-        <Icon className="h-5 w-5" style={{ color: accentColor }} />
+    <div className="flex items-center gap-2">
+      <div className="p-2 rounded-xl shrink-0" style={{ background: bgColor }}>
+        <Icon className="h-4 w-4" style={{ color: accentColor }} />
       </div>
-      <div>
-        <p className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">{title}</p>
-        <p className="text-xl font-bold text-gray-900">{value}</p>
+      <div className="min-w-0 flex-1">
+        <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide truncate" title={title}>{title}</p>
+        <p className="text-base font-bold text-gray-900 truncate pr-1" title={value}>{value}</p>
       </div>
     </div>
   </div>
@@ -165,7 +165,7 @@ const CashierDashboard = () => {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="mb-6 flex justify-between items-center fade-in-up">
+      <div className="mb-6 flex justify-between items-center fade-in-up sticky top-16 z-40 bg-gray-100 py-3 -mx-2 px-2">
         <div>
           <h1 className="text-2xl font-bold" style={{ color: '#800000' }}>Cashier Dashboard</h1>
           <p className="text-gray-500 text-sm mt-0.5">Ready to take some orders? 🍱</p>
